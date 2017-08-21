@@ -30,7 +30,7 @@ const executor, listener = "SkyNet", "SkyNetEyes"
 
 type TeamSpeakBots struct {
 	Bots  map[string]*Bot
-	await chan struct{}
+	Await chan struct{}
 }
 
 //Bot ,stores all information about Bot struct
@@ -67,11 +67,15 @@ func New(config *Config) (*TeamSpeakBots, error) {
 		}
 		bots.Bots[config.BotNames[indexName]] = newBot
 	}
+	bots.Await = make(chan struct{})
 	return bots, nil
 }
 
-func (t *TeamSpeakBots) setUpBot(config *Config, indexName int) (bot *Bot, err error) {
-	bot.query, err = query.NewServerQuery(config.Address)
+func (t *TeamSpeakBots) setUpBot(config *Config, indexName int) (*Bot, error) {
+	bot := new(Bot)
+	var err error
+	// TODO dirty fix I need to put up better design
+	bot.query, err = query.NewServerQuery(config.Address, config.BotNames[indexName])
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +87,7 @@ func (t *TeamSpeakBots) setUpBot(config *Config, indexName int) (bot *Bot, err e
 
 	commands := startParameters(config.ServerID, config.BotNames[indexName], config.Login, config.Password)
 	bot.query.ExecMultiple(commands, false)
+
 	return bot, nil
 }
 

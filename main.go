@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Overflow3D/ts3Bot_v2/components/bot"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 var (
@@ -15,5 +17,10 @@ var (
 
 func main() {
 	config := bot.SetConfig(addr, login, password, serverID, []string{"SkyNet", "SkyNetEyes"})
-	bot.New(config)
+	fmt.Println(addr, login, password, serverID)
+	bots, err := bot.New(config)
+	if err != nil {
+		panic(err)
+	}
+	<-bots.Await
 }
