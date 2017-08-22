@@ -1,10 +1,10 @@
 package bot
 
 import (
-	"fmt"
 	"log"
 	"time"
 
+	"github.com/Overflow3D/ts3Bot_v2/components/dispatcher"
 	"github.com/Overflow3D/ts3Bot_v2/components/query"
 )
 
@@ -87,7 +87,6 @@ func (t *TeamSpeakBots) setUpBot(config *Config, indexName int) (*Bot, error) {
 		commands = append(commands, query.RegisterListener()...)
 	}
 	bot.startTime()
-	fmt.Println(commands)
 	bot.query.ExecMultiple(commands, false)
 
 	return bot, nil
@@ -96,8 +95,8 @@ func (t *TeamSpeakBots) setUpBot(config *Config, indexName int) (*Bot, error) {
 func (t *TeamSpeakBots) notifyRegister(b *Bot) {
 	for {
 		notifications := <-b.query.Notify
-		n := query.FormatResponse(notifications, "notify")
-		log.Println(n)
+		notifyEvent := query.FormatResponse(notifications, "notify")
+		dispatcher.Dispatch(notifyEvent)
 	}
 }
 

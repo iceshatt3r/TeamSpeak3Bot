@@ -7,8 +7,8 @@ import (
 
 //Response , represents telnet response
 type Response struct {
-	action string
-	params []map[string]string
+	Action string
+	Params []map[string]string
 }
 
 //TSerror , prase string errot into Error()
@@ -27,24 +27,24 @@ func FormatResponse(s string, action string) *Response {
 
 	var splitResponse []string
 	if action == "cmd" {
-		r.action = "Cmd_Response"
+		r.Action = "Cmd_Response"
 		splitResponse = strings.Split(s, "|")
 	} else {
 		notifystr := strings.SplitN(s, " ", 2)
-		r.action = notifystr[0]
+		r.Action = notifystr[0]
 		splitResponse = strings.Split(notifystr[1], "|")
 
 	}
 	for i := range splitResponse {
-		r.params = append(r.params, make(map[string]string))
+		r.Params = append(r.Params, make(map[string]string))
 		splitWhiteSpaces := strings.Split(splitResponse[i], " ")
 
 		for j := range splitWhiteSpaces {
 			splitParams := strings.SplitN(splitWhiteSpaces[j], "=", 2)
 			if len(splitParams) > 1 {
-				r.params[i][splitParams[0]] = unescape(splitParams[1])
+				r.Params[i][splitParams[0]] = unescape(splitParams[1])
 			} else {
-				r.params[i][splitParams[0]] = ""
+				r.Params[i][splitParams[0]] = ""
 			}
 		}
 	}
