@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -79,13 +80,14 @@ func (t *TeamSpeakBots) setUpBot(config *Config, indexName int) (*Bot, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	var commands []*query.Command
+	commands = startParameters(config.ServerID, config.BotNames[indexName], config.Login, config.Password)
 	if isListener(config.BotNames[indexName]) {
 		go t.notifyRegister(bot)
+		commands = append(commands, query.RegisterListener()...)
 	}
 	bot.startTime()
-
-	commands := startParameters(config.ServerID, config.BotNames[indexName], config.Login, config.Password)
+	fmt.Println(commands)
 	bot.query.ExecMultiple(commands, false)
 
 	return bot, nil

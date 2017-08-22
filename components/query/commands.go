@@ -76,12 +76,12 @@ func clientMove(clid, cid string) *Command {
 	}
 }
 
-func notifyRegister(e string, id string) *Command {
+func notifyRegister(event string, id string) *Command {
 	if id != "" {
 		return &Command{
 			Name: "servernotifyregister",
 			params: map[string]string{
-				"event": e,
+				"event": event,
 				"id":    id, //register to channel 0, for more events
 			},
 		}
@@ -89,7 +89,7 @@ func notifyRegister(e string, id string) *Command {
 	return &Command{
 		Name: "servernotifyregister",
 		params: map[string]string{
-			"event": e,
+			"event": event,
 		},
 	}
 }
@@ -290,4 +290,8 @@ func addPermission(id, permID, value, skip string) *Command {
 			"permskip":  skip,
 		},
 	}
+}
+
+func RegisterListener() []*Command {
+	return []*Command{notifyRegister("channel", "0"), notifyRegister("textchannel", "0"), notifyRegister("textprivate", "0")}
 }
