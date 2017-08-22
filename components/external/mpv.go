@@ -23,7 +23,7 @@ func (a *Action) Send() error {
 }
 
 func (a *Action) endPoint() string {
-	return fmt.Sprintf("http://localhost/player/%s", a.SocketName)
+	return fmt.Sprintf("http://localhost:1234/player/%s/song/add", a.SocketName)
 }
 
 func makeRequest(url string, data []byte) error {
@@ -40,6 +40,7 @@ func makeRequest(url string, data []byte) error {
 		return err
 	}
 	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("Status code: %d", resp.StatusCode)
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Overflow3D/ts3Bot_v2/components/external"
 	"github.com/Overflow3D/ts3Bot_v2/components/query"
 )
 
@@ -16,14 +17,29 @@ func dispatchMessage(r *query.Response) {
 	if strings.Index(command, "!") != 0 {
 		return
 	}
-	executeCommand(command)
+	executeCommand(command, r)
 }
 
-func executeCommand(command string) {
+func executeCommand(command string, r *query.Response) {
+	slicedMsg := strings.Split(r.Params[0]["msg"], " ")
 	switch command {
 	case "!addsong":
-		fmt.Println(command)
+		addSong(slicedMsg)
 	default:
 		fmt.Println("Unknow action")
 	}
+}
+
+func addSong(slicedMsg []string) {
+	if len(slicedMsg) < 3 {
+		return
+	}
+	action := &external.Action{SocketName: slicedMsg[1], ActionName: "loadfile", Arguments: []string{removeUrlTags(slicedMsg[2]), "append"}}
+	if err := action.Send(); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func removeUrlTags(url string) string {
+	return url[5 : len(url)-7]
 }
