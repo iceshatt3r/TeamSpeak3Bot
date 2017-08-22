@@ -74,8 +74,8 @@ func New(config *Config) (*TeamSpeakBots, error) {
 func (t *TeamSpeakBots) setUpBot(config *Config, indexName int) (*Bot, error) {
 	bot := new(Bot)
 	var err error
-	// TODO dirty fix I need to put up better design
-	bot.query, err = query.NewServerQuery(config.Address, config.BotNames[indexName])
+
+	bot.query, err = query.NewServerQuery(config.Address, isListener(config.BotNames[indexName]))
 	if err != nil {
 		return nil, err
 	}

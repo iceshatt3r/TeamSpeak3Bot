@@ -22,14 +22,14 @@ type TelNet struct {
 }
 
 //NewServerQuery , create a new server query connection
-func NewServerQuery(addr string, name string) (*TelNet, error) {
+func NewServerQuery(addr string, isListener bool) (*TelNet, error) {
 	telnet := &TelNet{}
 	telnet.connect(addr)
 	telnet.scanConnection()
 	if !telnet.checkAndDiscard() {
 		return nil, errors.New("Couldn't connect to teamspeak 3 server on adress: " + addr)
 	}
-	go telnet.checkResponseOutPut(name)
+	go telnet.checkResponseOutPut(isListener)
 
 	return telnet, nil
 }
@@ -86,14 +86,14 @@ func (t *TelNet) checkAndDiscard() bool {
 	return true
 }
 
-func (t *TelNet) checkResponseOutPut(name string) {
+func (t *TelNet) checkResponseOutPut(isListener bool) {
 	t.err = make(chan string)
 	t.Notify = make(chan string)
 	for {
 		output := <-t.output
 		if strings.Index(output, "error") == 0 {
 			t.err <- output
-		} else if strings.Index(output, "notify") == 0 && name == "SkyNetEyes" {
+		} else if strings.Index(output, "notify") == 0 && isListener {
 			t.Notify <- output
 		} else {
 			t.cmdRes = output
