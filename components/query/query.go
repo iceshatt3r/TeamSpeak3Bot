@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"log"
 	"net"
 	"strings"
 )
@@ -52,14 +51,12 @@ func (t *TelNet) scanConnection() {
 	t.output = make(chan string)
 	go func() {
 		for {
-
 			t.scanner.Scan()
 			t.output <- t.scanner.Text()
 			e := t.scanner.Err()
 			if e != nil {
 				return
 			}
-
 		}
 	}()
 }
@@ -112,7 +109,6 @@ func (t *TelNet) Exec(cmd *Command) (*Response, error) {
 //ExecMultiple , executes multiple commands to serverQuery
 //silence -> determinates if there will be console output or not
 func (t *TelNet) ExecMultiple(cmd []*Command, silence bool) {
-	log.Println(cmd)
 	for _, c := range cmd {
 		fmt.Fprintf(t.conn, "%s\n\r", c)
 		<-t.err

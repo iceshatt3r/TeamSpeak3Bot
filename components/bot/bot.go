@@ -27,7 +27,8 @@ import (
 //   "OmittedRang": ["Head Admin", "Administrator", "Vouched"]
 // }
 
-const executor, listener = "SkyNet", "SkyNetEyes"
+const executor = "SkyNet"
+const listener = "SkyNetEyes"
 
 type TeamSpeakBots struct {
 	Bots  map[string]*Bot

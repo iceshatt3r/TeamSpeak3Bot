@@ -7,6 +7,8 @@ func Dispatch(r *query.Response) {
 	switch r.Action {
 	case "notifytextmessage":
 		dispatchMessage(r)
+	default:
+
 	}
 
 }

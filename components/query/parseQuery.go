@@ -24,8 +24,8 @@ func (e TSerror) Error() string {
 //FormatResponse , Formats output from telnet into Reponse struct
 func FormatResponse(s string, action string) *Response {
 	r := &Response{}
-
 	var splitResponse []string
+
 	if action == "cmd" {
 		r.Action = "Cmd_Response"
 		splitResponse = strings.Split(s, "|")
@@ -33,7 +33,6 @@ func FormatResponse(s string, action string) *Response {
 		notifystr := strings.SplitN(s, " ", 2)
 		r.Action = notifystr[0]
 		splitResponse = strings.Split(notifystr[1], "|")
-
 	}
 	for i := range splitResponse {
 		r.Params = append(r.Params, make(map[string]string))
