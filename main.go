@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Overflow3D/ts3Bot_v2/components/bot"
@@ -15,7 +16,8 @@ var (
 )
 
 func main() {
-	config := bot.SetConfig(addr, login, password, serverID, []string{"SkyNet", "SkyNetEyes"})
+	config := bot.SetConfig(addr, login, password, serverID, []string{"SkyNetEyes", "SkyNet"})
+	fmt.Println("Starting bot")
 	bots, err := bot.New(config)
 	if err != nil {
 		panic(err)

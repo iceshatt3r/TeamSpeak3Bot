@@ -43,7 +43,11 @@ func addSong(slicedMsg []string) {
 
 func removeBBCodeTags(url string) string {
 	if strings.Contains(url, "[") {
-		return url[5 : len(url)-7]
+		return cleanUpURL(url[5 : len(url)-7])
 	}
-	return url
+	return cleanUpURL(url)
+}
+
+func cleanUpURL(url string) string {
+	return strings.Replace(url, `\`, "", -1)
 }

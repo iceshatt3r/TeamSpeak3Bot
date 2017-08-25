@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"time"
 )
 
 const defaultPort = "10011"
@@ -55,6 +56,7 @@ func (t *TelNet) scanConnection() {
 			t.output <- t.scanner.Text()
 			e := t.scanner.Err()
 			if e != nil {
+				fmt.Println("Scan error", e)
 				return
 			}
 		}
@@ -96,7 +98,6 @@ func (t *TelNet) checkResponseOutPut(isListener bool) {
 			t.cmdRes = output
 		}
 	}
-
 }
 
 //Exec , executes command to serverQuery
@@ -110,6 +111,8 @@ func (t *TelNet) Exec(cmd *Command) (*Response, error) {
 //silence -> determinates if there will be console output or not
 func (t *TelNet) ExecMultiple(cmd []*Command, silence bool) {
 	for _, c := range cmd {
+		// since anti flood we need to make reasonable rest between commands otherwise we will get ban
+		time.Sleep(time.Millisecond * 20)
 		fmt.Fprintf(t.conn, "%s\n\r", c)
 		<-t.err
 	}

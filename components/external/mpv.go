@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+const externalurl = "url"
+
 type Action struct {
 	SocketName string
 	ActionName string   `json:"action"`
@@ -23,7 +25,7 @@ func (a *Action) Send() error {
 }
 
 func (a *Action) endPoint() string {
-	return fmt.Sprintf("http://localhost:1234/player/%s/song/add", a.SocketName)
+	return fmt.Sprintf(`%s/player/%s/song/add`, externalurl, a.SocketName)
 }
 
 func makeRequest(url string, data []byte) error {
