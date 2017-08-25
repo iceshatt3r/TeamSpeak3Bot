@@ -16,8 +16,8 @@ var (
 )
 
 func main() {
-	config := bot.SetConfig(addr, login, password, serverID, []string{"SkyNet", "SkyNetEyes"})
-	fmt.Println(addr, login, password, serverID)
+	config := bot.SetConfig(addr, login, password, serverID, []string{"SkyNetEyes", "SkyNet"})
+	fmt.Println("Starting bot")
 	bots, err := bot.New(config)
 	if err != nil {
 		panic(err)

@@ -1,9 +1,10 @@
 package bot
 
 import (
-	"log"
+	"fmt"
 	"time"
 
+	"github.com/Overflow3D/ts3Bot_v2/components/dispatcher"
 	"github.com/Overflow3D/ts3Bot_v2/components/query"
 )
 
@@ -26,7 +27,8 @@ import (
 //   "OmittedRang": ["Head Admin", "Administrator", "Vouched"]
 // }
 
-const executor, listener = "SkyNet", "SkyNetEyes"
+const executor = "SkyNet"
+const listener = "SkyNetEyes"
 
 type TeamSpeakBots struct {
 	Bots  map[string]*Bot
@@ -73,29 +75,31 @@ func New(config *Config) (*TeamSpeakBots, error) {
 
 func (t *TeamSpeakBots) setUpBot(config *Config, indexName int) (*Bot, error) {
 	bot := new(Bot)
+	fmt.Println("Setting up bot: ", config.BotNames[indexName])
 	var err error
-	// TODO dirty fix I need to put up better design
-	bot.query, err = query.NewServerQuery(config.Address, config.BotNames[indexName])
+
+	bot.query, err = query.NewServerQuery(config.Address, isListener(config.BotNames[indexName]))
 	if err != nil {
 		return nil, err
 	}
-
+	var commands []*query.Command
+	commands = startParameters(config.ServerID, config.BotNames[indexName], config.Login, config.Password)
 	if isListener(config.BotNames[indexName]) {
 		go t.notifyRegister(bot)
+		commands = append(commands, query.RegisterListener()...)
 	}
 	bot.startTime()
-
-	commands := startParameters(config.ServerID, config.BotNames[indexName], config.Login, config.Password)
 	bot.query.ExecMultiple(commands, false)
-
+	go bot.scheduler()
 	return bot, nil
 }
 
 func (t *TeamSpeakBots) notifyRegister(b *Bot) {
 	for {
 		notifications := <-b.query.Notify
-		n := query.FormatResponse(notifications, "notify")
-		log.Println(n)
+		//fmt.Println("a")
+		notifyEvent := query.FormatResponse(notifications, "notify")
+		dispatcher.Dispatch(notifyEvent)
 	}
 }
 
@@ -104,14 +108,15 @@ func (b *Bot) startTime() {
 }
 
 func (b *Bot) scheduler() {
-	ticker := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(time.Second * 90)
 	for {
 		select {
 		case <-ticker.C:
-			log.Println("tick tack")
-		case <-b.shutdownProcess.stopSchelduler:
-			ticker.Stop()
-			return
+			r, err := b.query.Exec(query.Version())
+			if err != nil {
+				fmt.Println("error while pinging", err)
+			}
+			fmt.Println("Ping response: ", r.Params)
 		}
 	}
 
